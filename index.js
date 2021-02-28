@@ -33,6 +33,7 @@ function menu() {
                 console.log('you pick option 2');
             } else if (userRes === '3') {
                 console.log('you pick option 3');
+                analyze.frequency();
             }
         }
     });

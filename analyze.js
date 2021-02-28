@@ -32,8 +32,20 @@ function length(websites) {
     }
 }*/
 
-/*function frequency(websites) {
-    let ocurrencies {}; 
+var detect = require('htmldeps')
+
+function frequency() {
+    fs.readFile('./local_pages/band.html', function (err, data) {
+        if (err) throw err;
+        else { 
+            var deps = detect(data.toString());
+            console.log('dependencias:',deps);
+        }
+    });
+}
+/*
+function frequency(websites) {
+    let ocurrencies {};
     for (var name in websites) {
         fs.readFile(websites[name], function (err, data) {
             if (err) throw err;
@@ -54,5 +66,5 @@ function length(websites) {
 
 Analyze.length = length;
 //Analyze.dependencies = dependencies;
-//Analyze.frequency = frequency;
+Analyze.frequency = frequency;
 module.exports = Analyze;

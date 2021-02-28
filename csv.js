@@ -1,10 +1,33 @@
 const parse = require('csv-parse');
 const fs = require('fs');
-const { finished } = require('stream/promises');
+
+
+const processFile = async (csv_route) => {
+    records = {};
+    const parser = fs
+    .createReadStream(csv_route)
+    .pipe(parse({
+        delimiter: ',',
+        columns: true
+    }));
+    for await (const record of parser) {
+        records[record.Website] = record.Path;
+    }
+    return records
+  }
+  
+  async function read(csv_route){
+    const websites = await processFile(csv_route);
+    return websites;
+  }
+
+
+
+/*const { finished } = require('stream/promises');
  
 const processFile = async (csv_route) => {
   records = {};
-  const parser = fs
+  const parser = Promisefs
   .createReadStream(csv_route)
   .pipe(parse({
     delimiter: ',',
@@ -23,7 +46,7 @@ const processFile = async (csv_route) => {
 async function read(csv_route){
   const websites = await processFile(csv_route);
   return websites;
-};
+};*/
 
 
 /*const parser = require('csv-parser'),
