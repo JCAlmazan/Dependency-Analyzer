@@ -4,9 +4,9 @@ const fs = require('fs'),
     Analyze = {};
 
 function length(websites) {
-
-    console.log("entor a length");
+    console.log("length websites:", websites);
     for (var name in websites) {
+        console.log("paso el for");
         if (validUrl.isUri(websites[name])) {
             const remote_url = websites[name],
                 path = '/tmp/' + websites[name],
