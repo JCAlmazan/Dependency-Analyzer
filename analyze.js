@@ -26,9 +26,29 @@ function length(websites) {
         fs.readFile(websites[name], function (err, data) {
             if (err) throw err;
             if (data.includes('<script>')) {
-                console.log(data)
+                console.log(name, dependency);
             }
         });
+    }
+}*/
+
+/*function frequency(websites) {
+    let ocurrencies {}; 
+    for (var name in websites) {
+        fs.readFile(websites[name], function (err, data) {
+            if (err) throw err;
+            if (data.includes('<script>')) {
+                if(ocurrencies[dependency]){
+                    ocurrencies[dependency] += 1;
+                }
+                else{
+                    ocurrencies[dependency] = 1;
+                }
+            }
+        });
+    }
+    for (var dependency in ocurrencies){
+        console.log(dependency, ocurrencies[dependency]);
     }
 }*/
 
