@@ -18,7 +18,7 @@ function welcome() {
 
 function menu() {
     var websites = Promise.resolve(welcome());
-    websites.then(()=>{
+    websites.then(function (value) {
         let userRes;
         while (userRes !== '0') {
             console.log("0) Exit")
@@ -28,16 +28,16 @@ function menu() {
             userRes = readLineSync.question("Pick an option: ");
             if (userRes === '1') {
                 console.log('you pick option 1');
-                analyze.length(websites);
+                analyze.length(value);
             } else if (userRes === '2') {
                 console.log('you pick option 2');
+                analyze.dependencies(value);
             } else if (userRes === '3') {
                 console.log('you pick option 3');
-                analyze.frequency();
+                analyze.frequency(value);
             }
         }
     });
-    
 }
 
 menu();

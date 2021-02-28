@@ -1,15 +1,15 @@
 const fs = require('fs'),
     validUrl = require('valid-url'),
     request = require('request'),
+    detect = require('htmldeps'),
     Analyze = {};
 
 function length(websites) {
-    console.log("length websites:", websites);
+    console.log('Website name and the content length (in bytes):');
     for (var name in websites) {
-        console.log("paso el for");
         if (validUrl.isUri(websites[name])) {
             const remote_url = websites[name],
-                path = '/tmp/' + websites[name],
+                path = '/tmp/' + name + '.html',
                 media = request(remote_url).pipe(fs.createWriteStream(path));
             media.on("finish", () => {
                 console.log(name + " length,", fs.statSync(path).size);
@@ -21,28 +21,73 @@ function length(websites) {
     }
 }
 
-/*function dependencies(websites) {
+const process_dependencies = async (websites) => { 
     for (var name in websites) {
         fs.readFile(websites[name], function (err, data) {
             if (err) throw err;
-            if (data.includes('<script>')) {
-                console.log(name, dependency);
+            else {
+                var deps = detect(data.toString()).filter(check_js);
+                deps.forEach(dependency => {
+                    console.log(name, dependency);
+                });
             }
         });
     }
-}*/
+}
 
-var detect = require('htmldeps')
+async function dependencies(websites) {
+    await process_dependencies(websites);
+}
 
-function frequency() {
-    fs.readFile('./local_pages/band.html', function (err, data) {
+function check_js(deps) {
+    return deps.includes(".js");
+}
+
+function frequency(websites) {
+    /*fs.readFile('./local_pages/band.html', function (err, data) {
         if (err) throw err;
-        else { 
+        else {
             var deps = detect(data.toString());
-            console.log('dependencias:',deps);
+            console.log('dependencias:', deps.filter(check_js));
+        }
+    });*/
+
+    var ocurrences = Promise.resolve(recorrer(websites));
+    ocurrences.then(function (value) {
+        console.log('entro frequency: ', value);
+        for (var dependency in value) {
+            console.log(dependency, value[dependency]);
         }
     });
 }
+
+async function recorrer(websites) {
+    var ocurrences = {};
+    for (var name in websites) {
+        fs.readFile(websites[name], function (err, data) {
+            if (err) throw err;
+            else {
+                var deps = detect(data.toString()).filter(check_js);
+                console.log('dependencias:', deps);
+                for (let i = 0; i < deps.length; i++) {
+                    if (ocurrences[deps[i]]) {
+                        ocurrences[deps[i]] += 1;
+                    }
+                    else {
+                        ocurrences[deps[i]] = 1;
+                    }
+                }
+            }
+            console.log('ocurrencias1', ocurrences);
+        });
+
+    }
+    console.log('ocurrencias2', ocurrences);
+    return ocurrences;
+}
+
+
+
 /*
 function frequency(websites) {
     let ocurrencies {};
@@ -65,6 +110,6 @@ function frequency(websites) {
 }*/
 
 Analyze.length = length;
-//Analyze.dependencies = dependencies;
+Analyze.dependencies = dependencies;
 Analyze.frequency = frequency;
 module.exports = Analyze;
