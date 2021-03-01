@@ -4,6 +4,7 @@ const fs = require('fs'),
     detect = require('htmldeps'),
     Analyze = {};
 
+//for each website checks if it's an http resource or a local file and prints its size
 function length(websites) {
     console.log('Website name and the content length (in bytes):'.cyan);
     for (var name in websites) {
@@ -20,6 +21,7 @@ function length(websites) {
     }
 }
 
+//for each website checks if it's an http resource or a local file and prints every dependency
 function dependencies(websites) {
     console.log('Website name and the dependencies:'.cyan);
     for (var name in websites) {
@@ -50,10 +52,12 @@ function dependencies(websites) {
     }
 }
 
+//checks if deps is a .js dependency
 function check_js(deps) {
     return deps.includes(".js");
 }
 
+//for each website checks if it's an http resource or a local file, count every dependency's ocurrency, then prints it
 function frequency(websites) {
     var ocurrences = {};
     for (var name in websites) {

@@ -3,12 +3,14 @@ const analyze = require('./analyze.js'),
     readLineSync = require('readline-sync');
     colors = require('colors');
 
+//waits for csv file, then returns an object with all websites
 function welcome() {
     console.log('Welcome to Dependency Analyzer Program(DAP)!'.cyan);
     let csv_route = readLineSync.question("Please enter your .csv file route: ");
     return csv.read(csv_route);
 }
 
+//receives websites, then they are sent to selected option
 function menu() {
     var websites = Promise.resolve(welcome());
     websites.then(function (value) {
@@ -36,32 +38,5 @@ function menu() {
     });
 }
 
+//execute menu function when program starts
 menu();
-
-
-/*
-fs.createReadStream('websites.csv')
-    .pipe(parser())
-    .on('data', (row) => {
-        getFilesizeInBytes(row.Path);
-        //var scriptCount = row.Path.getElementsByTagName('script').length;
-        //console.log(row.Website + " length,", scriptCount);
-    })
-    .on('end', () => {
-        console.log('CSV file successfully processed');
-    });
-
-function getFilesizeInBytes(route) {
-
-    if (validUrl.isUri(route)) {
-        const remote_url = route,
-            path = '/tmp/tmp.html',
-            media = Promise.resolve(request(remote_url).pipe(fs.createWriteStream(path)));
-        media.then(()=>{
-            console.log("pagina length,", fs.statSync(path).size);
-        });
-    }
-    else {
-        console.log("pagina length,", fs.statSync(route).size);
-    }
-}*/
