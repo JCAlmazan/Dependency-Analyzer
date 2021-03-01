@@ -14,4 +14,13 @@ Retrieve the dependencies and the frequency occurrences.
 
 Website's html content will be available from two sources, one from the local file system and the other one using http resources. 
 
-Implemented in NodeJS
+# How to execute the application.
+
+1- Clone or download this proyect into a local folder
+2- Open a terminal into this new folder
+3- To install dependencies execute: npm install
+4- To start the program execute: npm start
+5- Enter "websites.csv" to use the example .csv file
+6- Follow the instructions to analyze dependencies.
+
+Implemented in Node.js

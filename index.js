@@ -19,19 +19,18 @@ function menu() {
             console.log("3 ".green, "Frequency");
             console.log("0 ".red, "Exit");
             userRes = readLineSync.question("Pick an option: ");
-            if (userRes === '1') {
-                console.log('you pick option 1');
+            if (userRes === '1') {                
                 analyze.length(value);
-            } else if (userRes === '2') {
-                console.log('you pick option 2');
+            } else if (userRes === '2') {                
                 analyze.dependencies(value);
-            } else if (userRes === '3') {
-                console.log('you pick option 3');
+            } else if (userRes === '3') {                
                 analyze.frequency(value);
             }
             if (userRes !== '0') {
-                console.log('Continue?'.cyan);
-                userRes = readLineSync.question("0 ".red+"No "+"1 ".green+"Yes ");
+                console.log('Continue?'.magenta);
+                console.log("0 ".red+"No ");
+                console.log("1 ".green+"Yes ");
+                userRes = readLineSync.question("Pick an option: ");
             }
         }
     });
