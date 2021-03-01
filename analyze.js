@@ -21,17 +21,17 @@ function length(websites) {
     }
 }
 
-const process_dependencies = async (websites) => { 
+const process_dependencies = async (websites) => {
     for (var name in websites) {
-        fs.readFile(websites[name], function (err, data) {
-            if (err) throw err;
-            else {
-                var deps = detect(data.toString()).filter(check_js);
-                deps.forEach(dependency => {
-                    console.log(name, dependency);
-                });
-            }
-        });
+        try {
+            const data = fs.readFileSync(websites[name], 'utf8');
+            var deps = detect(data.toString()).filter(check_js);
+            deps.forEach(dependency => {
+                console.log(name, dependency);
+            });
+        } catch (err) {
+            console.error(err)
+        }
     }
 }
 
@@ -43,47 +43,35 @@ function check_js(deps) {
     return deps.includes(".js");
 }
 
-function frequency(websites) {
-    /*fs.readFile('./local_pages/band.html', function (err, data) {
-        if (err) throw err;
-        else {
-            var deps = detect(data.toString());
-            console.log('dependencias:', deps.filter(check_js));
-        }
-    });*/
+/*async function frequency(websites) {
+    var ocurrences = await process_frequency(websites);
+    for (var dependency in ocurrences) {
+        console.log(dependency, ocurrences[dependency]);
+    }
+}*/
 
-    var ocurrences = Promise.resolve(recorrer(websites));
-    ocurrences.then(function (value) {
-        console.log('entro frequency: ', value);
-        for (var dependency in value) {
-            console.log(dependency, value[dependency]);
-        }
-    });
-}
-
-async function recorrer(websites) {
+async function frequency(websites) {
     var ocurrences = {};
     for (var name in websites) {
-        fs.readFile(websites[name], function (err, data) {
-            if (err) throw err;
-            else {
-                var deps = detect(data.toString()).filter(check_js);
-                console.log('dependencias:', deps);
-                for (let i = 0; i < deps.length; i++) {
-                    if (ocurrences[deps[i]]) {
-                        ocurrences[deps[i]] += 1;
-                    }
-                    else {
-                        ocurrences[deps[i]] = 1;
-                    }
+        try {
+            const data = fs.readFileSync(websites[name], 'utf8');
+            var deps = detect(data.toString()).filter(check_js);
+            deps.forEach(dependency => {
+                if (ocurrences[dependency]) {
+                    ocurrences[dependency] += 1;
                 }
-            }
-            console.log('ocurrencias1', ocurrences);
-        });
-
+                else {
+                    ocurrences[dependency] = 1;
+                }
+            });
+        } catch (err) {
+            console.error(err)
+        }
     }
-    console.log('ocurrencias2', ocurrences);
-    return ocurrences;
+    console.log('Dependencies and the frequency occurrences:');
+    for (var dependency in ocurrences) {
+        console.log(dependency+',', ocurrences[dependency]);
+    }
 }
 
 

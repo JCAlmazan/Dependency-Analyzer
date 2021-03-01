@@ -9,10 +9,6 @@ const analyze = require('./analyze.js'),
 function welcome() {
     console.log('Welcome to Dependency Analyzer Program (DAP)!');
     let csv_route = readLineSync.question("Please enter your .csv file route: ");
-    /*var websites = Promise.resolve(csv.read(csv_route));
-    websites.then(()=>{
-        return websites;
-    });*/
     return csv.read(csv_route);
 }
 
