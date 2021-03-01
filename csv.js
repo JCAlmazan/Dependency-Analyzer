@@ -17,6 +17,7 @@ const processFile = async (csv_route) => {
 
 async function read(csv_route) {
   const websites = await processFile(csv_route);
+  console.log('CSV file successfully processed.'.yellow);
   return websites;
 }
 

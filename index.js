@@ -1,9 +1,10 @@
 const analyze = require('./analyze.js'),
     csv = require('./csv.js'),
     readLineSync = require('readline-sync');
+    colors = require('colors');
 
 function welcome() {
-    console.log('Welcome to Dependency Analyzer Program (DAP)!');
+    console.log('Welcome to Dependency Analyzer Program(DAP)!'.cyan);
     let csv_route = readLineSync.question("Please enter your .csv file route: ");
     return csv.read(csv_route);
 }
@@ -12,11 +13,11 @@ function menu() {
     var websites = Promise.resolve(welcome());
     websites.then(function (value) {
         let userRes;
-        while (userRes !== '0') {
-            console.log("0) Exit")
-            console.log("1) Length")
-            console.log("2) Dependencies")
-            console.log("3) Frequency")
+        while (userRes !== '0') {  
+            console.log("1 ".green, "Length");
+            console.log("2 ".green, "Dependencies");
+            console.log("3 ".green, "Frequency");
+            console.log("0 ".red, "Exit");
             userRes = readLineSync.question("Pick an option: ");
             if (userRes === '1') {
                 console.log('you pick option 1');
@@ -27,6 +28,10 @@ function menu() {
             } else if (userRes === '3') {
                 console.log('you pick option 3');
                 analyze.frequency(value);
+            }
+            if (userRes !== '0') {
+                console.log('Continue?'.cyan);
+                userRes = readLineSync.question("0 ".red+"No "+"1 ".green+"Yes ");
             }
         }
     });
