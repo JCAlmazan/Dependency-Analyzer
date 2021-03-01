@@ -1,10 +1,6 @@
 const analyze = require('./analyze.js'),
     csv = require('./csv.js'),
-    validUrl = require('valid-url'),
-    readLineSync = require('readline-sync'),
-    parser = require('csv-parser'),
-    request = require('request'),
-    fs = require('fs');
+    readLineSync = require('readline-sync');
 
 function welcome() {
     console.log('Welcome to Dependency Analyzer Program (DAP)!');
