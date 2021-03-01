@@ -3,29 +3,48 @@ Analyze js dependencies from a list of websites (.csv).
 
 Reading a list of websites in csv format, this program returns:
 
-1- Length:
+1. Length:
 Retrieve the list of results containing the website name and the content length( in bytes).
-
-2- Dependencies:
+```
+Output example:
+Trello, 20032
+La Nación, 32323
+...
+```
+2. Dependencies:
 Retrieve the list of results containing the website name and the dependencies.
-
-3- Frequency:
+```
+Output example:
+Trello, analytics.js
+Trello, bootstrap.js
+La Nación, analytics.js
+La Nación, d3.js
+...
+```
+3. Frequency:
 Retrieve the dependencies and the frequency occurrences.
+```
+Output example:
+analytics.js, 8
+d3.js, 2
+bootstrap.js, 3
+…
+```
 
 Website's html content will be available from two sources, one from the local file system and the other one using http resources. 
 
-# How to execute the application
+## How to execute the application
 
-1- Clone or download this proyect into a local folder
+* Clone or download this proyect into a local folder
 
-2- Open a terminal into this new folder
+* Open a terminal into this new folder
 
-3- To install dependencies execute: npm install
+* To install dependencies execute: ```npm install```
 
-4- To start the program execute: npm start
+* To start the program execute: ```npm start```
 
-5- Enter "websites.csv" to use the example .csv file
+* Enter "websites.csv" to use the example .csv file
 
-6- Follow the instructions to analyze dependencies.
+* Follow the instructions to analyze dependencies.
 
 Implemented in Node.js
