@@ -1,6 +1,6 @@
 const fs = require('fs'),
     validUrl = require('valid-url'),
-    request = require('request'),
+    request = require('sync-request'),
     detect = require('htmldeps'),
     Analyze = {};
 
@@ -8,12 +8,11 @@ function length(websites) {
     console.log('Website name and the content length (in bytes):'.cyan);
     for (var name in websites) {
         if (validUrl.isUri(websites[name])) {
-            const remote_url = websites[name],
-                path = '/tmp/' + name + '.html',
-                media = request(remote_url).pipe(fs.createWriteStream(path));
-            media.on("finish", () => {
-                console.log(name + ",", fs.statSync(path).size);
-            });
+            const path = '/tmp/' + name + '.html';
+            var res = request('GET', websites[name]);
+            var body = res.getBody();
+            fs.writeFileSync(path, body, 'utf8');
+            console.log(name + ",", fs.statSync(path).size);
         }
         else {
             console.log(name + ",", fs.statSync(websites[name]).size);
@@ -21,24 +20,23 @@ function length(websites) {
     }
 }
 
-async function dependencies(websites) {
+function dependencies(websites) {
     console.log('Website name and the dependencies:'.cyan);
     for (var name in websites) {
         try {
             if (validUrl.isUri(websites[name])) {
-                const remote_url = websites[name],
-                    path = '/tmp/' + name + '.html',
-                    media = request(remote_url).pipe(fs.createWriteStream(path));
-                media.on("finish", () => {                    
-                    const data = fs.readFileSync(path, 'utf8');
-                    var deps = detect(data.toString()).filter(check_js);
-                    deps.forEach(dependency => {
-                        const slug = dependency.split('/').pop();
-                        console.log(name + ',', slug.yellow);
-                    });
+                const path = '/tmp/' + name + '.html';
+                var res = request('GET', websites[name]);
+                var body = res.getBody();
+                fs.writeFileSync(path, body, 'utf8');
+                const data = fs.readFileSync(path, 'utf8');
+                var deps = detect(data.toString()).filter(check_js);
+                deps.forEach(dependency => {
+                    const slug = dependency.split('/').pop();
+                    console.log(name + ',', slug.yellow);
                 });
             }
-            else {                
+            else {
                 const data = fs.readFileSync(websites[name], 'utf8');
                 var deps = detect(data.toString()).filter(check_js);
                 deps.forEach(dependency => {
@@ -56,12 +54,22 @@ function check_js(deps) {
     return deps.includes(".js");
 }
 
-async function frequency(websites) {
+function frequency(websites) {
     var ocurrences = {};
     for (var name in websites) {
         try {
-            const data = fs.readFileSync(websites[name], 'utf8');
-            var deps = detect(data.toString()).filter(check_js);
+            if (validUrl.isUri(websites[name])) {
+                const path = '/tmp/' + name + '.html';
+                var res = request('GET', websites[name]);
+                var body = res.getBody();
+                fs.writeFileSync(path, body, 'utf8');
+                const data = fs.readFileSync(path, 'utf8');
+                var deps = detect(data.toString()).filter(check_js);
+            }
+            else {
+                const data = fs.readFileSync(websites[name], 'utf8');
+                var deps = detect(data.toString()).filter(check_js);
+            }
             deps.forEach(dependency => {
                 if (ocurrences[dependency]) {
                     ocurrences[dependency] += 1;
