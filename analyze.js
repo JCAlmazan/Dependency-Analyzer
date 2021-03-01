@@ -1,50 +1,79 @@
 const fs = require('fs'),
     validUrl = require('valid-url'),
-    request = require('request'),
+    request = require('sync-request'),
     detect = require('htmldeps'),
     Analyze = {};
 
+//for each website checks if it's an http resource or a local file and prints its size
 function length(websites) {
-    console.log('Website name and the content length (in bytes):');
+    console.log('Website name and the content length (in bytes):'.cyan);
     for (var name in websites) {
         if (validUrl.isUri(websites[name])) {
-            const remote_url = websites[name],
-                path = '/tmp/' + name + '.html',
-                media = request(remote_url).pipe(fs.createWriteStream(path));
-            media.on("finish", () => {
-                console.log(name + " length,", fs.statSync(path).size);
-            });
+            const path = '/tmp/' + name + '.html';
+            var res = request('GET', websites[name]);
+            var body = res.getBody();
+            fs.writeFileSync(path, body, 'utf8');
+            console.log(name + ",", fs.statSync(path).size);
         }
         else {
-            console.log(name + " length,", fs.statSync(websites[name]).size);
+            console.log(name + ",", fs.statSync(websites[name]).size);
         }
     }
 }
 
-async function dependencies (websites) {
-    console.log('Website name and the dependencies:');
+//for each website checks if it's an http resource or a local file and prints every dependency
+function dependencies(websites) {
+    console.log('Website name and the dependencies:'.cyan);
     for (var name in websites) {
         try {
-            const data = fs.readFileSync(websites[name], 'utf8');
-            var deps = detect(data.toString()).filter(check_js);
-            deps.forEach(dependency => {
-                console.log(name+',', dependency);
-            });
+            if (validUrl.isUri(websites[name])) {
+                const path = '/tmp/' + name + '.html';
+                var res = request('GET', websites[name]);
+                var body = res.getBody();
+                fs.writeFileSync(path, body, 'utf8');
+                const data = fs.readFileSync(path, 'utf8');
+                var deps = detect(data.toString()).filter(check_js);
+                deps.forEach(dependency => {
+                    const slug = dependency.split('/').pop();
+                    console.log(name + ',', slug.yellow);
+                });
+            }
+            else {
+                const data = fs.readFileSync(websites[name], 'utf8');
+                var deps = detect(data.toString()).filter(check_js);
+                deps.forEach(dependency => {
+                    const slug = dependency.split('/').pop();
+                    console.log(name + ',', slug.yellow);
+                });
+            }
         } catch (err) {
             console.error(err)
         }
     }
 }
+
+//checks if deps is a .js dependency
 function check_js(deps) {
     return deps.includes(".js");
 }
 
-async function frequency(websites) {
+//for each website checks if it's an http resource or a local file, count every dependency's ocurrency, then prints it
+function frequency(websites) {
     var ocurrences = {};
     for (var name in websites) {
         try {
-            const data = fs.readFileSync(websites[name], 'utf8');
-            var deps = detect(data.toString()).filter(check_js);
+            if (validUrl.isUri(websites[name])) {
+                const path = '/tmp/' + name + '.html';
+                var res = request('GET', websites[name]);
+                var body = res.getBody();
+                fs.writeFileSync(path, body, 'utf8');
+                const data = fs.readFileSync(path, 'utf8');
+                var deps = detect(data.toString()).filter(check_js);
+            }
+            else {
+                const data = fs.readFileSync(websites[name], 'utf8');
+                var deps = detect(data.toString()).filter(check_js);
+            }
             deps.forEach(dependency => {
                 if (ocurrences[dependency]) {
                     ocurrences[dependency] += 1;
@@ -57,9 +86,10 @@ async function frequency(websites) {
             console.error(err)
         }
     }
-    console.log('Dependencies and the frequency occurrences:');
+    console.log('Dependencies and the frequency occurrences:'.cyan);
     for (var dependency in ocurrences) {
-        console.log(dependency+',', ocurrences[dependency]);
+        const slug = dependency.split('/').pop();
+        console.log(slug + ',', ocurrences[dependency]);
     }
 }
 

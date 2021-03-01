@@ -1,6 +1,7 @@
 const parse = require('csv-parse');
 const fs = require('fs');
 
+//parse csv file, then saves values into an object and returns
 const processFile = async (csv_route) => {
   records = {};
   const parser = fs
@@ -15,8 +16,10 @@ const processFile = async (csv_route) => {
   return records
 }
 
+//waits for websites, then returns
 async function read(csv_route) {
   const websites = await processFile(csv_route);
+  console.log('CSV file successfully processed.'.yellow);
   return websites;
 }
 
