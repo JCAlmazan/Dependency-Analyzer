@@ -31,11 +31,13 @@ bootstrap.js, 3
 …
 ```
 
-Website's html content will be available from two sources, one from the local file system and the other one using http resources. 
+Website's html content will be available from two sources, one from the local file system and the other one using http resources.
 
-## How to execute the application
+## Requirements
 
 * Node.js version 14 or above is needed
+
+## How to execute the application
 
 * Clone or download this proyect into a local folder
 
