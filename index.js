@@ -7,9 +7,8 @@ const analyze = require('./analyze.js'),
 function welcome() {
     console.log('Welcome to Dependency Analyzer Program(DAP)!'.cyan);
     let csv_route = readLineSync.question("Please enter your .csv file route: ");
-    if (csv_route.split('.').pop() !== 'csv'){
-        console.error('Wrong Format!'.red);
-        process.exit();
+    while (!csv.validate(csv_route)){
+        csv_route = readLineSync.question("Please enter your .csv file route: ");
     }
     return csv.read(csv_route);
 }

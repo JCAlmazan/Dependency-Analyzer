@@ -23,5 +23,19 @@ async function read(csv_route) {
   return websites;
 }
 
+function validate(csv_route) {
+  if (csv_route.split('.').pop() !== 'csv') {
+    console.error('Wrong Format!'.red);
+    return false;
+  } else if (fs.existsSync(csv_route)) {
+    return true;
+  }
+  else {
+    console.error("File doesn't exist!".red);
+    return false;
+  }
+}
+
 exports.read = read;
+exports.validate = validate;
 
