@@ -35,6 +35,8 @@ Website's html content will be available from two sources, one from the local fi
 
 ## How to execute the application
 
+* Node.js version 14 or above is needed
+
 * Clone or download this proyect into a local folder
 
 * Open a terminal into this new folder
