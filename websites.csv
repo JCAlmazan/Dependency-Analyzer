@@ -6,3 +6,5 @@ Parallax,./local_pages/parallax.html
 Node,https://nodejs.org/en/
 La Nacion,https://www.lanacion.com.ar
 Npm,https://www.npmjs.com/
+Wrong Website,http://wrongexample.com.ar
+Wrong File,./local_pages/wrong_file.html

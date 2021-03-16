@@ -8,15 +8,20 @@ const fs = require('fs'),
 function length(websites) {
     console.log('Website name and the content length (in bytes):'.cyan);
     for (var name in websites) {
-        if (validUrl.isUri(websites[name])) {
-            const path = '/tmp/' + name + '.html';
-            var res = request('GET', websites[name]);
-            var body = res.getBody();
-            fs.writeFileSync(path, body, 'utf8');
-            console.log(name + ",", fs.statSync(path).size);
+        try {
+            if (validUrl.isUri(websites[name])) {
+                const path = '/tmp/' + name + '.html';
+                var res = request('GET', websites[name]);
+                var body = res.getBody();
+                fs.writeFileSync(path, body, 'utf8');
+                console.log(name + ",", fs.statSync(path).size);
+            }
+            else {
+                console.log(name + ",", fs.statSync(websites[name]).size);
+            }
         }
-        else {
-            console.log(name + ",", fs.statSync(websites[name]).size);
+        catch (err) {
+            console.error(`Couldn't find ${name} at ${websites[name]}`.red);
         }
     }
 }
@@ -32,34 +37,41 @@ function dependencies(websites) {
                 var body = res.getBody();
                 fs.writeFileSync(path, body, 'utf8');
                 const data = fs.readFileSync(path, 'utf8');
-                var deps = detect(data.toString()).filter(check_js);
+                let deps = filter_js(data);
                 deps.forEach(dependency => {
-                    const slug = dependency.split('/').pop();
-                    console.log(name + ',', slug.yellow);
+                    console.log(name + ',', dependency.yellow);
                 });
             }
             else {
                 const data = fs.readFileSync(websites[name], 'utf8');
-                var deps = detect(data.toString()).filter(check_js);
+                let deps = filter_js(data);
                 deps.forEach(dependency => {
-                    const slug = dependency.split('/').pop();
-                    console.log(name + ',', slug.yellow);
+                    console.log(name + ',', dependency.yellow);
                 });
             }
         } catch (err) {
-            console.error(err)
+            console.error(`Couldn't find ${name} at ${websites[name]}`.red);
         }
     }
 }
 
-//checks if deps is a .js dependency
-function check_js(deps) {
-    return deps.includes(".js");
+//filter .js dependencies from data
+function filter_js(data) {
+    let deps = [];
+    detect(data.toString())
+        .forEach(dependency => {
+            const slug = dependency.split('/').pop();
+            if (slug.split('.').pop() === 'js') {
+                deps.push(slug);
+            }
+        });
+    return deps;
 }
 
 //for each website checks if it's an http resource or a local file, count every dependency's ocurrency, then prints it
 function frequency(websites) {
     var ocurrences = {};
+    console.log('Dependencies and the frequency occurrences:'.cyan);
     for (var name in websites) {
         try {
             if (validUrl.isUri(websites[name])) {
@@ -68,11 +80,11 @@ function frequency(websites) {
                 var body = res.getBody();
                 fs.writeFileSync(path, body, 'utf8');
                 const data = fs.readFileSync(path, 'utf8');
-                var deps = detect(data.toString()).filter(check_js);
+                var deps = filter_js(data);
             }
             else {
                 const data = fs.readFileSync(websites[name], 'utf8');
-                var deps = detect(data.toString()).filter(check_js);
+                var deps = filter_js(data);
             }
             deps.forEach(dependency => {
                 if (ocurrences[dependency]) {
@@ -83,10 +95,9 @@ function frequency(websites) {
                 }
             });
         } catch (err) {
-            console.error(err)
+            console.error(`Couldn't find ${name} at ${websites[name]}`.red);
         }
-    }
-    console.log('Dependencies and the frequency occurrences:'.cyan);
+    }   
     for (var dependency in ocurrences) {
         const slug = dependency.split('/').pop();
         console.log(slug + ',', ocurrences[dependency]);
